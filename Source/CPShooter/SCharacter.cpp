@@ -2,6 +2,9 @@
 
 #include "SCharacter.h"
 #include "Components/InputComponent.h"
+#include "Camera/CameraComponent.h"
+#include "GameFramework/SpringArmComponent.h"
+#include "GameFramework/PawnMovementComponent.h"
 
 static const FName IB_AXIS_MOVE_FORWARD = "MoveForward";
 static const FName IB_AXIS_MOVE_RIGHT = "MoveRight";
@@ -16,13 +19,20 @@ ASCharacter::ASCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("Spring Arm"));
+	SpringArmComp->bUsePawnControlRotation = true;
+	SpringArmComp->SetupAttachment(RootComponent);
+
+	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
+	CameraComp->SetupAttachment(SpringArmComp);
+
+	GetMovementComponent()->GetNavAgentPropertiesRef().bCanCrouch = true;//messy
 }
 
 // Called when the game starts or when spawned
 void ASCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 // Called every frame
