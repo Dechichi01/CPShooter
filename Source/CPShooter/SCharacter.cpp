@@ -5,6 +5,7 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/PawnMovementComponent.h"
+#include "Debug/Debug.h"
 
 static const FName IB_AXIS_MOVE_FORWARD = "MoveForward";
 static const FName IB_AXIS_MOVE_RIGHT = "MoveRight";
@@ -54,5 +55,15 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAction(IB_ACTION_CROUCH, IE_Pressed, this, &ASCharacter::CrouchAction);
 	PlayerInputComponent->BindAction(IB_ACTION_CROUCH, IE_Released, this, &ASCharacter::UnCrouchAction);
 	PlayerInputComponent->BindAction(IB_ACTION_JUMP, IE_Pressed, this, &ASCharacter::JumpAction);
+}
+
+FVector ASCharacter::GetPawnViewLocation() const
+{
+	if (ENSURE(CameraComp))
+	{
+		return CameraComp->GetComponentLocation();
+	}
+
+	return Super::GetPawnViewLocation();
 }
 
