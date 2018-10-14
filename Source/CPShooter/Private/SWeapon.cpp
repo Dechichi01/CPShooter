@@ -7,6 +7,7 @@
 #include "Debug/Debug.h"
 #include "DrawDebugHelpers.h"
 #include "Particles/ParticleSystemComponent.h"
+#include "GameFramework/Pawn.h"
 
 static const char* MUZZLE_SOCKET_NAME = "MuzzleSocket";
 static const char* TRACE_TARGET_NAME = "BeamTarget";
@@ -79,6 +80,16 @@ void ASWeapon::Fire()
 			if (ENSURE(TraceParticle))
 			{
 				TraceParticle->SetVectorParameter(ShotTraceTargetName, EndTrace);
+			}
+		}
+
+		APawn* Pawn = Cast<APawn>(Owner);
+		if (ENSURE(Pawn))
+		{
+			APlayerController* PlayerController = Cast<APlayerController>(Pawn->GetController());
+			if (ENSURE(PlayerController))
+			{
+				PlayerController->ClientPlayCameraShake(FireCameraShakeParams);
 			}
 		}
 	}

@@ -14,6 +14,8 @@ static const FName IB_AXIS_TURN = "Turn";
 static const FName IB_ACTION_CROUCH = "Crouch";
 static const FName IB_ACTION_JUMP = "Jump";
 
+static const FName IB_ACTION_AIM = "Aim";
+
 // Sets default values
 ASCharacter::ASCharacter()
 {
@@ -28,12 +30,17 @@ ASCharacter::ASCharacter()
 	CameraComp->SetupAttachment(SpringArmComp);
 
 	GetMovementComponent()->GetNavAgentPropertiesRef().bCanCrouch = true;//messy
+
+	AimFov = 60.f;
 }
 
 // Called when the game starts or when spawned
 void ASCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	DefaultFov = CameraComp->FieldOfView;
+	TargetFov = DefaultFov;
 }
 
 // Called every frame
@@ -41,6 +48,7 @@ void ASCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	CameraComp->FieldOfView = FMath::FInterpTo(CameraComp->FieldOfView, TargetFov, DeltaTime, AimSpeed);
 }
 
 // Called to bind functionality to input
@@ -55,6 +63,9 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAction(IB_ACTION_CROUCH, IE_Pressed, this, &ASCharacter::CrouchAction);
 	PlayerInputComponent->BindAction(IB_ACTION_CROUCH, IE_Released, this, &ASCharacter::UnCrouchAction);
 	PlayerInputComponent->BindAction(IB_ACTION_JUMP, IE_Pressed, this, &ASCharacter::JumpAction);
+
+	PlayerInputComponent->BindAction(IB_ACTION_AIM, IE_Pressed, this, &ASCharacter::Aim);
+	PlayerInputComponent->BindAction(IB_ACTION_AIM, IE_Released, this, &ASCharacter::EndAim);
 }
 
 FVector ASCharacter::GetPawnViewLocation() const

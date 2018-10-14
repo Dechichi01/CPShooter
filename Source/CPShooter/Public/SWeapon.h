@@ -47,6 +47,9 @@ protected:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "FX")
 	FName ShotTraceTargetName;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "FX")
+	TSubclassOf<class UCameraShake> FireCameraShakeParams;
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
