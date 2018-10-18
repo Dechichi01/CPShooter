@@ -5,7 +5,10 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/PawnMovementComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "Debug/Debug.h"
+#include "CPShooter.h"
+#include "Net/UnrealNetwork.h"
 
 static const FName IB_AXIS_MOVE_FORWARD = "MoveForward";
 static const FName IB_AXIS_MOVE_RIGHT = "MoveRight";
@@ -30,8 +33,11 @@ ASCharacter::ASCharacter()
 	CameraComp->SetupAttachment(SpringArmComp);
 
 	GetMovementComponent()->GetNavAgentPropertiesRef().bCanCrouch = true;//messy
+	GetCapsuleComponent()->SetCollisionResponseToChannel(COLLISION_WEAPON, ECR_Ignore);
 
 	AimFov = 60.f;
+
+	USaveGame
 }
 
 // Called when the game starts or when spawned
@@ -76,5 +82,12 @@ FVector ASCharacter::GetPawnViewLocation() const
 	}
 
 	return Super::GetPawnViewLocation();
+}
+
+void ASCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	//DOREPLIFETIME(ASCharacter, CurrentWeapon);
 }
 
